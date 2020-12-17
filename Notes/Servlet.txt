@@ -1,0 +1,50 @@
+ADDSERVLET.JAVA:-----
+public void service(HttpServletRequest req, HttpServletResponse res) throws IOException { //method name always "service"
+		//doGet and doPost can also be used to restrict values to show or not show in url
+		//but above both will be called via service method only!!
+
+INDEX.HTML:---------
+<form action="add" method="post"> <!-- by default,method is get(values will be in url).Post(values not shown in url) -->
+    Enter 1st Number: <input type="text" name="num1"><br>
+    Enter 2nd Number: <input type="text" name="num2"><br>
+    <input type="submit" value="Add">
+	
+WEB.XML:-------	
+<servlet>
+   <servlet-name>add</servlet-name>
+   <servlet-class>com.nishant.practice.AddServlet</servlet-class>
+ </servlet>
+ <servlet-mapping>
+   <servlet-name>add</servlet-name>
+   <url-pattern>/add</url-pattern>
+ </servlet-mapping>
+ 
+ CALLING ONE SERVLET FROM OTHER SERVLET:------------------------------------------------------------------------------(REQUEST DISPATCHER)
+ 
+ For this, we need to use request dispatcher
+ 
+ RequestDispatcher rd = req.getRequestDispatcher("sq");  //pass the name ..i.e. it will open /sq. But for that we need to add servlet in web.xml
+		rd.forward(req, res); 
+		
+			
+WEB.XML:-------	
+<servlet>
+   <servlet-name>square</servlet-name>
+   <servlet-class>com.nishant.practice.SqServlet</servlet-class>
+ </servlet>
+ <servlet-mapping>
+   <servlet-name>square</servlet-name>
+   <url-pattern>/sq</url-pattern>
+ </servlet-mapping>
+ 
+ SENDING AND RECEIVING DATA FROM ONE SERVLET TO OTHER:--------------------
+ 
+ req.setAttribute("k", k); //we are sending data to square servlet by putting it in request object (in AddServlet.java)
+ 
+ int k = (int) req.getAttribute("k"); //To get the data that we've sent in request object. (in SqServlet.java)
+ 
+ REQUEST DISPATCHER & SEND_REDIRECT & SESSION MANAGEMENT--------------------------------------
+ RequestDispatcher -- Used when we are calling one servlet from other servlet and to send data from the same
+ 
+ sendRedirect -- Used when we redirect from one page to another. In this,first servlet informs browser about redirecting to other page.
+                 In this, two requests are sent. So to send data from one servlet to other, we will use SESSION MANAGEMENT
