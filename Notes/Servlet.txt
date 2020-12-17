@@ -48,3 +48,38 @@ WEB.XML:-------
  
  sendRedirect -- Used when we redirect from one page to another. In this,first servlet informs browser about redirecting to other page.
                  In this, two requests are sent. So to send data from one servlet to other, we will use SESSION MANAGEMENT
+				 
+SEND_REDIRECT & (1)URL_REWRITING (2 other methods are there- session and cookies):------				 
+
+res.sendRedirect("sq?k="+k);  //Url re-writing..we are sending data to other servlet using this. (in AddServlet.java)
+//we are using this technique because we are using doGet ,so data will be taken from the url.
+
+int k = Integer.parseInt(req.getParameter("k")); // to get parameter by key-value (in SqServlet.java)((INSTEAD OF WHAT WE WROTE IN LINE 44))
+
+(2)SESSION MANAGEMENT:------
+
+        HttpSession session = req.getSession(); // starting the session  ((in AddServlet.java))
+		session.setAttribute("k", k); //setting the value of k to key k
+		
+		HttpSession session = req.getSession(); // starting the session  ((in SqServlet.java))
+		//session.removeAttribute("k"); --to remove data from the session, so in next line,we wont get any data
+		
+		int k = (int)session.getAttribute("k"); // getting value that we assigned in AddServlet in session.
+		
+(3)COOKIES:-----------------		
+		 First we send cookie with data as response to client and again request is sent to other servlet containing that cookie in request object.
+		 We retrieve that object and finally get the data that we sent using cookie.
+		 
+		 ((AddServlet.java))
+		 Cookie cookie = new Cookie("k",k + ""); // to convert k to string, we appended ""
+		res.addCookie(cookie);
+		
+		 ((SqServlet.java))
+		 Cookie cookies[] = req.getCookies(); // getting all trhe cookies..in an array
+		
+		int k = 0;
+		for(Cookie c : cookies) {            // iterating through the cookies
+			if(c.getName().equals("k")) {    // finding the cookie containing value of k
+				k  = Integer.parseInt(c.getValue());  
+			}
+		}
